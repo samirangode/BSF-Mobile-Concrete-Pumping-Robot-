@@ -1,0 +1,122 @@
+<robot name="BSF">
+  <link name="base_link"/>
+  <link name="link1">
+       <visual>
+	<origin xyz="0 0 0" rpy="0 0 0" />      
+       <geometry>
+        <cylinder length="8.5" radius="0.5"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 .8 1"/>
+      </material>
+    </visual>
+    <collision>
+	<origin xyz="0 0 0" rpy="0 0 0" />       
+	<geometry>
+        <cylinder length="8.5" radius="0.5"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 4.25" rpy="0 0 0"/>
+      <mass value="10"/>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+    </inertial>
+  </link>
+  
+
+  <link name="link2">
+       <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 .8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="10"/>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+    </inertial>
+  </link>   
+  
+
+
+<link name="link3">
+       <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 .8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="10"/>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+    </inertial>
+  </link>
+
+<link name="link4">
+       <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 .8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="10"/>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+    </inertial>
+  </link>
+
+
+  <joint name="joint1" type="revolute">
+    <parent link="base_link"/>
+    <child link="link1"/>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+     <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/>	
+  </joint>
+
+  <joint name="joint2" type="revolute">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="0 0 8.5" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+     <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/>
+  </joint>
+
+  <joint name="joint3" type="revolute">
+    <parent link="link2"/>
+    <child link="link3"/>
+    <origin xyz="0 0 7.5" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+     <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/> 
+  </joint>
+  
+  <joint name="joint4" type="revolute">
+    <parent link="link3"/>
+    <child link="link4"/>
+    <origin xyz="0 0 7.5" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+     <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/> 
+  </joint>
+
+</robot>
