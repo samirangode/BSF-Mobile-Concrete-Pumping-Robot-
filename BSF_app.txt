@@ -1,0 +1,225 @@
+classdef second_app < matlab.apps.AppBase
+
+    % Properties that correspond to app components
+    properties (Access = public)
+        UIFigure               matlab.ui.Figure
+        UIAxes2                matlab.ui.control.UIAxes
+        xEditFieldLabel        matlab.ui.control.Label
+        xEditField             matlab.ui.control.NumericEditField
+        yEditFieldLabel        matlab.ui.control.Label
+        yEditField             matlab.ui.control.NumericEditField
+        Angle_1EditFieldLabel  matlab.ui.control.Label
+        Angle_1EditField       matlab.ui.control.NumericEditField
+        Angle_3EditFieldLabel  matlab.ui.control.Label
+        Angle_3EditField       matlab.ui.control.NumericEditField
+        Angle_2EditFieldLabel  matlab.ui.control.Label
+        Angle_2EditField       matlab.ui.control.NumericEditField
+        Angle_4EditFieldLabel  matlab.ui.control.Label
+        Angle_4EditField       matlab.ui.control.NumericEditField
+        SIMULATEButton         matlab.ui.control.Button
+        Boom1GaugeLabel        matlab.ui.control.Label
+        Boom1Gauge             matlab.ui.control.Gauge
+        Boom2GaugeLabel        matlab.ui.control.Label
+        Boom2Gauge             matlab.ui.control.Gauge
+        Boom3GaugeLabel        matlab.ui.control.Label
+        Boom3Gauge             matlab.ui.control.Gauge
+        Boom4GaugeLabel        matlab.ui.control.Label
+        Boom4Gauge             matlab.ui.control.Gauge
+    end
+
+    methods (Access = private)
+
+        % Button pushed function: SIMULATEButton
+        function SIMULATEButtonPushed(app, event)
+            x1 = app.xEditField.Value;
+            x2 = app.yEditField.Value;
+            w1 = app.Angle_1EditField.Value*pi/180;
+            w2 = app.Angle_2EditField.Value*pi/180;
+            w3 = app.Angle_3EditField.Value*pi/180;
+            w4 = app.Angle_4EditField.Value*pi/180;
+            
+            [configSol,rob,solInfo] = ik_BSF(x1,x2,w1,w2,w3,w4);
+            
+            theta1 = configSol(1);
+            theta2 = configSol(2);
+            theta3 = configSol(3);
+            theta4 = configSol(4);
+            app.Boom1Gauge.Value = abs(theta1*180/pi);
+            app.Boom2Gauge.Value = abs(theta2*180/pi);
+            app.Boom3Gauge.Value = abs(theta3*180/pi);
+            app.Boom4Gauge.Value = abs(theta4*180/pi);
+            
+            point1 = transform(theta1)*[0 0 0 1]';
+            point2 = transform(theta1)*transform(theta2)*[0 0 0 1]';
+            point3 = transform(theta1)*transform(theta2)*transform(theta3)*[0 0 0 1]';
+            point4 = transform(theta1)*transform(theta2)*transform(theta3)*transform(theta4)*[0 0 0 1]';
+            
+%             hold on
+%             plot(app.UIAxes,1,configSol(1)*180/pi,'*');
+%             plot(app.UIAxes,2,configSol(2)*180/pi,'*');
+%             plot(app.UIAxes,3,configSol(3)*180/pi,'*');
+%             plot(app.UIAxes,4,configSol(4)*180/pi,'*');
+%             hold off
+            X = [0 point1(1) point2(1) point3(1) point4(1)];
+            Y = [0 point1(2) point2(2) point3(2) point4(2)];
+            plot(app.UIAxes2,X,Y);
+            
+            
+        end
+    end
+
+    % App initialization and construction
+    methods (Access = private)
+
+        % Create UIFigure and components
+        function createComponents(app)
+
+            % Create UIFigure
+            app.UIFigure = uifigure;
+            app.UIFigure.Position = [100 100 640 480];
+            app.UIFigure.Name = 'UI Figure';
+
+            % Create UIAxes2
+            app.UIAxes2 = uiaxes(app.UIFigure);
+            title(app.UIAxes2, 'Title')
+            xlabel(app.UIAxes2, 'X')
+            ylabel(app.UIAxes2, 'Y')
+            app.UIAxes2.PlotBoxAspectRatio = [1 0.512 0.512];
+            app.UIAxes2.Position = [311 84 330 210];
+
+            % Create xEditFieldLabel
+            app.xEditFieldLabel = uilabel(app.UIFigure);
+            app.xEditFieldLabel.HorizontalAlignment = 'right';
+            app.xEditFieldLabel.Position = [32 403 25 22];
+            app.xEditFieldLabel.Text = 'x';
+
+            % Create xEditField
+            app.xEditField = uieditfield(app.UIFigure, 'numeric');
+            app.xEditField.Position = [72 403 100 22];
+
+            % Create yEditFieldLabel
+            app.yEditFieldLabel = uilabel(app.UIFigure);
+            app.yEditFieldLabel.HorizontalAlignment = 'right';
+            app.yEditFieldLabel.Position = [32 353 25 22];
+            app.yEditFieldLabel.Text = 'y';
+
+            % Create yEditField
+            app.yEditField = uieditfield(app.UIFigure, 'numeric');
+            app.yEditField.Position = [72 353 100 22];
+
+            % Create Angle_1EditFieldLabel
+            app.Angle_1EditFieldLabel = uilabel(app.UIFigure);
+            app.Angle_1EditFieldLabel.HorizontalAlignment = 'right';
+            app.Angle_1EditFieldLabel.Position = [15 230 50 22];
+            app.Angle_1EditFieldLabel.Text = 'Angle_1';
+
+            % Create Angle_1EditField
+            app.Angle_1EditField = uieditfield(app.UIFigure, 'numeric');
+            app.Angle_1EditField.Position = [80 230 100 22];
+
+            % Create Angle_3EditFieldLabel
+            app.Angle_3EditFieldLabel = uilabel(app.UIFigure);
+            app.Angle_3EditFieldLabel.HorizontalAlignment = 'right';
+            app.Angle_3EditFieldLabel.Position = [15 157 50 22];
+            app.Angle_3EditFieldLabel.Text = 'Angle_3';
+
+            % Create Angle_3EditField
+            app.Angle_3EditField = uieditfield(app.UIFigure, 'numeric');
+            app.Angle_3EditField.Position = [80 157 100 22];
+
+            % Create Angle_2EditFieldLabel
+            app.Angle_2EditFieldLabel = uilabel(app.UIFigure);
+            app.Angle_2EditFieldLabel.HorizontalAlignment = 'right';
+            app.Angle_2EditFieldLabel.Position = [15 192 50 22];
+            app.Angle_2EditFieldLabel.Text = 'Angle_2';
+
+            % Create Angle_2EditField
+            app.Angle_2EditField = uieditfield(app.UIFigure, 'numeric');
+            app.Angle_2EditField.Position = [80 192 100 22];
+
+            % Create Angle_4EditFieldLabel
+            app.Angle_4EditFieldLabel = uilabel(app.UIFigure);
+            app.Angle_4EditFieldLabel.HorizontalAlignment = 'right';
+            app.Angle_4EditFieldLabel.Position = [15 124 50 22];
+            app.Angle_4EditFieldLabel.Text = 'Angle_4';
+
+            % Create Angle_4EditField
+            app.Angle_4EditField = uieditfield(app.UIFigure, 'numeric');
+            app.Angle_4EditField.Position = [80 124 100 22];
+
+            % Create SIMULATEButton
+            app.SIMULATEButton = uibutton(app.UIFigure, 'push');
+            app.SIMULATEButton.ButtonPushedFcn = createCallbackFcn(app, @SIMULATEButtonPushed, true);
+            app.SIMULATEButton.Position = [32 40 100 22];
+            app.SIMULATEButton.Text = 'SIMULATE';
+
+            % Create Boom1GaugeLabel
+            app.Boom1GaugeLabel = uilabel(app.UIFigure);
+            app.Boom1GaugeLabel.HorizontalAlignment = 'center';
+            app.Boom1GaugeLabel.Position = [215 349 48 22];
+            app.Boom1GaugeLabel.Text = 'Boom-1';
+
+            % Create Boom1Gauge
+            app.Boom1Gauge = uigauge(app.UIFigure, 'circular');
+            app.Boom1Gauge.Limits = [0 180];
+            app.Boom1Gauge.Position = [192 386 95 95];
+
+            % Create Boom2GaugeLabel
+            app.Boom2GaugeLabel = uilabel(app.UIFigure);
+            app.Boom2GaugeLabel.HorizontalAlignment = 'center';
+            app.Boom2GaugeLabel.Position = [335 347 48 22];
+            app.Boom2GaugeLabel.Text = 'Boom-2';
+
+            % Create Boom2Gauge
+            app.Boom2Gauge = uigauge(app.UIFigure, 'circular');
+            app.Boom2Gauge.Limits = [0 180];
+            app.Boom2Gauge.Position = [311 384 97 97];
+
+            % Create Boom3GaugeLabel
+            app.Boom3GaugeLabel = uilabel(app.UIFigure);
+            app.Boom3GaugeLabel.HorizontalAlignment = 'center';
+            app.Boom3GaugeLabel.Position = [442 350 48 22];
+            app.Boom3GaugeLabel.Text = 'Boom-3';
+
+            % Create Boom3Gauge
+            app.Boom3Gauge = uigauge(app.UIFigure, 'circular');
+            app.Boom3Gauge.Limits = [0 180];
+            app.Boom3Gauge.Position = [421 384 94 94];
+
+            % Create Boom4GaugeLabel
+            app.Boom4GaugeLabel = uilabel(app.UIFigure);
+            app.Boom4GaugeLabel.HorizontalAlignment = 'center';
+            app.Boom4GaugeLabel.Position = [557 347 48 22];
+            app.Boom4GaugeLabel.Text = 'Boom-4';
+
+            % Create Boom4Gauge
+            app.Boom4Gauge = uigauge(app.UIFigure, 'circular');
+            app.Boom4Gauge.Limits = [0 180];
+            app.Boom4Gauge.Position = [532 381 97 97];
+        end
+    end
+
+    methods (Access = public)
+
+        % Construct app
+        function app = second_app
+
+            % Create and configure components
+            createComponents(app)
+
+            % Register the app with App Designer
+            registerApp(app, app.UIFigure)
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.UIFigure)
+        end
+    end
+end
